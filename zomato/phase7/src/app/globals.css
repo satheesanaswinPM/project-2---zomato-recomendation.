@@ -4,12 +4,12 @@
 
 @layer base {
   body {
-    @apply bg-surface-bg text-ink-primary antialiased;
+    @apply text-ink-primary antialiased;
   }
 
   input:focus,
   select:focus,
   textarea:focus {
-    @apply outline-none ring-2 ring-brand/15 border-brand;
+    @apply outline-none ring-2 ring-brand/20 border-brand;
   }
 }

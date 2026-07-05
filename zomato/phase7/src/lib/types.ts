@@ -51,7 +51,14 @@ export const EMPTY_PREFERENCES: SearchPreferences = {
 };
 
 export const BUDGET_OPTIONS: { value: BudgetLevel; label: string }[] = [
-  { value: "low", label: "Low (Rs.0 - Rs.500)" },
-  { value: "medium", label: "Medium (Rs.501 - Rs.1,500)" },
-  { value: "high", label: "High (Rs.1,501+)" },
+  { value: "low", label: "Rs. 0 - 500" },
+  { value: "medium", label: "Rs. 500 - 1,500" },
+  { value: "high", label: "Rs. 1,501+" },
+];
+
+export const RATING_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Any rating" },
+  { value: "3.5", label: "3.5+" },
+  { value: "4", label: "4.0+" },
+  { value: "4.5", label: "4.5+" },
 ];

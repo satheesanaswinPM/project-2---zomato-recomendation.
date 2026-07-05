@@ -8,15 +8,22 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
+      },
       colors: {
         brand: {
           DEFAULT: "#E23744",
           hover: "#CB2F3B",
         },
+        rating: {
+          DEFAULT: "#2E9E5B",
+        },
         surface: {
           bg: "#F6F7FB",
           card: "#FFFFFF",
-          muted: "#FAFAFA",
+          muted: "#F4F6F8",
         },
         ink: {
           primary: "#1A1A2E",
@@ -33,7 +40,7 @@ const config: Config = {
         },
       },
       boxShadow: {
-        card: "0 2px 12px rgba(0, 0, 0, 0.08)",
+        card: "0 4px 24px rgba(0, 0, 0, 0.08)",
       },
       maxWidth: {
         content: "720px",
