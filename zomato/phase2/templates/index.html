@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zomato Recommendation — Preferences</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Restaurant Preferences</h1>
+      <p>Tell us what you're looking for and we'll find the best matches.</p>
+    </header>
+
+    {% if success and preferences %}
+    <section class="success-panel">
+      <h2>Preferences saved</h2>
+      <dl class="pref-summary">
+        <dt>Location</dt><dd>{{ preferences.location }}</dd>
+        <dt>Budget</dt><dd>{{ preferences.budget | capitalize }}</dd>
+        <dt>Cuisine</dt><dd>{{ preferences.cuisine or "Any" }}</dd>
+        <dt>Minimum rating</dt><dd>{{ preferences.min_rating }}</dd>
+        <dt>Additional notes</dt><dd>{{ preferences.additional_notes or "—" }}</dd>
+      </dl>
+      <a class="btn btn-secondary" href="{{ url_for('index') }}">Search again</a>
+    </section>
+    {% else %}
+
+    {% if warnings %}
+    <div class="alert alert-warning">
+      {% for field, message in warnings.items() %}
+      <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <form class="pref-form" method="post" action="{{ url_for('submit_form') }}">
+      <div class="field {% if errors.get('location') %}field-error{% endif %}">
+        <label for="location">Location *</label>
+        <input
+          type="text"
+          id="location"
+          name="location"
+          placeholder="e.g. Bangalore, Delhi, Mumbai"
+          value="{{ form.get('location', '') if form else '' }}"
+          required
+        >
+        {% if errors.get('location') %}
+        <span class="error-text">{{ errors.location }}</span>
+        {% endif %}
+      </div>
+
+      <div class="field {% if errors.get('budget') %}field-error{% endif %}">
+        <label for="budget">Budget *</label>
+        <select id="budget" name="budget" required>
+          <option value="" disabled {% if not form or not form.get('budget') %}selected{% endif %}>Select budget</option>
+          <option value="low" {% if form and form.get('budget') == 'low' %}selected{% endif %}>Low (₹0 – ₹500)</option>
+          <option value="medium" {% if form and form.get('budget') == 'medium' %}selected{% endif %}>Medium (₹501 – ₹1,500)</option>
+          <option value="high" {% if form and form.get('budget') == 'high' %}selected{% endif %}>High (₹1,501+)</option>
+        </select>
+        {% if errors.get('budget') %}
+        <span class="error-text">{{ errors.budget }}</span>
+        {% endif %}
+      </div>
+
+      <div class="field {% if errors.get('cuisine') %}field-error{% endif %}">
+        <label for="cuisine">Cuisine</label>
+        <input
+          type="text"
+          id="cuisine"
+          name="cuisine"
+          placeholder="e.g. Italian, North Indian"
+          value="{{ form.get('cuisine', '') if form else '' }}"
+        >
+        {% if errors.get('cuisine') %}
+        <span class="error-text">{{ errors.cuisine }}</span>
+        {% endif %}
+      </div>
+
+      <div class="field {% if errors.get('min_rating') %}field-error{% endif %}">
+        <label for="min_rating">Minimum rating</label>
+        <input
+          type="number"
+          id="min_rating"
+          name="min_rating"
+          min="0"
+          max="5"
+          step="0.1"
+          placeholder="0 – 5"
+          value="{{ form.get('min_rating', '') if form else '' }}"
+        >
+        {% if errors.get('min_rating') %}
+        <span class="error-text">{{ errors.min_rating }}</span>
+        {% endif %}
+      </div>
+
+      <div class="field {% if errors.get('additional_notes') %}field-error{% endif %}">
+        <label for="additional_notes">Additional notes</label>
+        <textarea
+          id="additional_notes"
+          name="additional_notes"
+          rows="3"
+          placeholder="e.g. family-friendly, quick service"
+        >{{ form.get('additional_notes', '') if form else '' }}</textarea>
+        {% if errors.get('additional_notes') %}
+        <span class="error-text">{{ errors.additional_notes }}</span>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Find restaurants</button>
+    </form>
+    {% endif %}
+  </main>
+</body>
+</html>

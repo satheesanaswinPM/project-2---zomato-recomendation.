@@ -1,0 +1,16 @@
+name,location,cuisines,approx_cost(for two people),rate,votes,rest_type,address
+
+Jalsa,Banashankari,"North Indian, Mughlai",800,4.1/5,775,Casual Dining,"942, 21st Main Road, 2nd Stage, Banashankari, Bangalore"
+
+Onesta,Banashankari,"Pizza, Cafe, Italian",600,4.6/5,2556,Casual Dining,"111, 1st Floor, 5th Block, Banashankari, Bangalore"
+
+Spice Elephant,Banashankari,"Chinese, North Indian",800,4.1/5,792,Casual Dining,"4th Floor, 4th Block, Banashankari, Bangalore"
+
+Sankey Pavilion,Banashankari,"Continental, Indian",1000,3.8/5,418,Casual Dining,"5th Block, Banashankari, Bangalore"
+
+New Restaurant,Banashankari,Italian,500,new,10,Cafe,"Sample Road, Banashankari, Bangalore"
+
+Delhi Darbar,Connaught Place,"North Indian, Mughlai","1,200",4.5/5,3200,Casual Dining,"Block A, Connaught Place, New Delhi"
+
+,Banashankari,Chinese,700,4.0/5,100,Cafe,"Sample Road, Banashankari, Bangalore"
+

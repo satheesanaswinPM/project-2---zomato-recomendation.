@@ -1,0 +1,6 @@
+-r phase1/requirements.txt
+-r phase2/requirements.txt
+-r phase3/requirements.txt
+-r phase4/requirements.txt
+-r phase5/requirements.txt
+-r phase6/requirements.txt

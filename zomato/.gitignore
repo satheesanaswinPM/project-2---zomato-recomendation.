@@ -1,5 +1,9 @@
 # Dependencies
 node_modules/
+phase7/.tools/
+
+# Next.js
+phase7/.next/
 
 # Environment
 .env
@@ -10,6 +14,10 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# Cached dataset
+phase1/cache/
+data/cache/
 
 # OS
 .DS_Store
