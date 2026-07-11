@@ -69,6 +69,15 @@ class TestStore(unittest.TestCase):
     def test_get_by_unknown_city(self):
         self.assertEqual(self.store.get_by_city("Shimla"), [])
 
+    def test_localities_for_bangalore(self):
+        localities = self.store.localities("Bangalore")
+        self.assertIn("Banashankari", localities)
+
+    def test_get_by_location_locality(self):
+        results = self.store.get_by_location("Banashankari")
+        self.assertGreater(len(results), 0)
+        self.assertTrue(all(r.locality == "Banashankari" for r in results))
+
     def test_validation_report(self):
         report = self.store.validation_report()
         self.assertEqual(report["total_restaurants"], 6)

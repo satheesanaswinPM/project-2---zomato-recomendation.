@@ -61,6 +61,12 @@ class TestFilter(unittest.TestCase):
         self.assertTrue(result.is_empty)
         self.assertIn("No restaurants found", result.message or "")
 
+    def test_filter_by_locality(self):
+        prefs = UserPreferences(location="Banashankari", budget="medium")
+        result = filter_restaurants(self.store, prefs)
+        self.assertFalse(result.is_empty)
+        self.assertTrue(all(r.locality == "Banashankari" for r in result.candidates))
+
     def test_relax_filters_when_no_exact_match(self):
         prefs = UserPreferences(
             location="Bangalore",

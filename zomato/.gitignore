@@ -8,6 +8,7 @@ phase7/.next/
 # Environment
 .env
 .env.local
+phase9/.streamlit/secrets.toml
 
 # Python
 __pycache__/
@@ -18,6 +19,7 @@ venv/
 # Cached dataset
 phase1/cache/
 data/cache/
+phase8/cache/
 
 # OS
 .DS_Store

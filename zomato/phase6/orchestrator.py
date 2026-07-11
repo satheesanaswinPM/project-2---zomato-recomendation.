@@ -35,13 +35,21 @@ def get_store_source() -> Path | None:
     return None
 
 
+_STORE_CACHE: dict[str, Any] = {}
+
+
 def build_default_store(*, source_path: Path | None = None):
     if source_path is not None:
         return build_store(source_path=source_path)
+
     cached = get_store_source()
-    if cached is not None:
-        return build_store(source_path=cached)
-    return build_store()
+    cache_key = str(cached) if cached is not None else "__default__"
+    if cache_key not in _STORE_CACHE:
+        if cached is not None:
+            _STORE_CACHE[cache_key] = build_store(source_path=cached)
+        else:
+            _STORE_CACHE[cache_key] = build_store()
+    return _STORE_CACHE[cache_key]
 
 
 @dataclass

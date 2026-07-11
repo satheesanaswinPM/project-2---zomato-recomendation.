@@ -16,11 +16,13 @@ class FilterConfig:
     relax_on_empty: bool = True
 
 
-def _matches_budget(restaurant: Restaurant, budget: str) -> bool:
+def _matches_budget(restaurant: Restaurant, preferences: UserPreferences) -> bool:
     if restaurant.cost_for_two is None:
         return False
-    low, high = BUDGET_RANGES[budget]  # type: ignore[index]
     cost = restaurant.cost_for_two
+    if preferences.max_budget is not None:
+        return cost <= preferences.max_budget
+    low, high = BUDGET_RANGES[preferences.budget]
     return low <= cost <= high
 
 
@@ -50,7 +52,7 @@ def _apply_filters(
     results = restaurants
 
     if apply_budget:
-        results = [r for r in results if _matches_budget(r, preferences.budget)]
+        results = [r for r in results if _matches_budget(r, preferences)]
 
     if apply_cuisine and preferences.cuisine:
         results = [r for r in results if _matches_cuisine(r, preferences.cuisine)]
@@ -85,14 +87,14 @@ def filter_restaurants(
     relaxes rating, cuisine, then budget filters.
     """
     config = config or FilterConfig()
-    city_restaurants = store.get_by_city(preferences.location)
+    city_restaurants = store.get_by_location(preferences.location)
 
     if not city_restaurants:
         return FilterResult(
             candidates=[],
             message=(
                 f"No restaurants found in {preferences.location}. "
-                f"Available cities: {', '.join(store.cities()) or 'none'}."
+                f"Try a Bangalore locality such as Indiranagar, Whitefield, or HSR."
             ),
         )
 

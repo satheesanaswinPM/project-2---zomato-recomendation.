@@ -49,6 +49,20 @@ class TestPreferences(unittest.TestCase):
         self.assertFalse(result.is_valid)
         self.assertIn("budget", result.errors)
 
+    def test_custom_budget(self):
+        result = parse_preferences(
+            {"location": "Bangalore", "budget": "custom", "max_budget": 2000}
+        )
+        self.assertTrue(result.is_valid)
+        assert result.preferences is not None
+        self.assertEqual(result.preferences.budget, "custom")
+        self.assertEqual(result.preferences.max_budget, 2000)
+
+    def test_custom_budget_missing_amount(self):
+        result = parse_preferences({"location": "Bangalore", "budget": "custom"})
+        self.assertFalse(result.is_valid)
+        self.assertIn("budget", result.errors)
+
     def test_min_rating_defaults_to_zero(self):
         result = parse_preferences({"location": "Mumbai", "budget": "high"})
         self.assertTrue(result.is_valid)

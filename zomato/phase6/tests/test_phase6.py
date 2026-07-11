@@ -123,6 +123,49 @@ class TestApi(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("Access-Control-Allow-Methods", response.headers)
 
+    def test_locations_endpoint(self):
+        class _FakeStore:
+            def localities(self, city=None):
+                return ["Banashankari", "Indiranagar", "Marathahalli"]
+
+        with patch("phase6.app.build_default_store", return_value=_FakeStore()):
+            response = self.client.get("/api/locations?city=Bangalore&q=ind")
+        self.assertEqual(response.status_code, 200)
+        payload = json.loads(response.data)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["locations"], ["Indiranagar"])
+
+    def test_parse_preferences_endpoint(self):
+        mock_payload = {
+            "location": "Indiranagar",
+            "budget": "low",
+            "cuisine": "Italian",
+            "min_rating": 4,
+            "additional_notes": "",
+        }
+
+        class _MockClient:
+            def complete(self, system, user):
+                return json.dumps(mock_payload)
+
+        with patch("phase8.pipeline._client_or_default", return_value=_MockClient()):
+            response = self.client.post(
+                "/api/parse-preferences",
+                json={"query": "Cheap Italian in Indiranagar"},
+                content_type="application/json",
+            )
+        self.assertEqual(response.status_code, 200)
+        payload = json.loads(response.data)
+        self.assertTrue(payload["ok"])
+        self.assertEqual(payload["preferences"]["location"], "Indiranagar")
+
+    def test_history_endpoint(self):
+        response = self.client.get("/api/history")
+        self.assertEqual(response.status_code, 200)
+        payload = json.loads(response.data)
+        self.assertTrue(payload["ok"])
+        self.assertIn("history", payload)
+
 
 if __name__ == "__main__":
     unittest.main()

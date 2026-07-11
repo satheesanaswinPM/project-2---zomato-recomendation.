@@ -7,14 +7,17 @@ from typing import Any, Literal
 
 from phase1.preprocessor import normalize_city
 
-BudgetLevel = Literal["low", "medium", "high"]
+BudgetLevel = Literal["low", "medium", "high", "custom"]
 
-VALID_BUDGETS: tuple[BudgetLevel, ...] = ("low", "medium", "high")
+VALID_BUDGETS: tuple[BudgetLevel, ...] = ("low", "medium", "high", "custom")
+PRESET_BUDGETS: tuple[str, ...] = ("low", "medium", "high")
 MIN_RATING = 0.0
 MAX_RATING = 5.0
 MAX_NOTES_LENGTH = 500
+MIN_CUSTOM_BUDGET = 1
+MAX_CUSTOM_BUDGET = 100_000
 
-BUDGET_RANGES: dict[BudgetLevel, tuple[int, int | float]] = {
+BUDGET_RANGES: dict[str, tuple[int, int | float]] = {
     "low": (0, 500),
     "medium": (501, 1500),
     "high": (1501, float("inf")),
@@ -28,6 +31,7 @@ class UserPreferences:
     cuisine: str | None = None
     min_rating: float = 0.0
     additional_notes: str = ""
+    max_budget: float | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -44,14 +48,52 @@ class ValidationResult:
         return self.preferences is not None and not self.errors
 
 
-def _parse_budget(value: Any) -> tuple[BudgetLevel | None, str | None]:
+def _parse_max_budget(value: Any) -> tuple[float | None, str | None]:
+    if value is None or str(value).strip() == "":
+        return None, "Enter a custom budget amount in Rs."
+
+    try:
+        amount = float(str(value).strip().replace(",", ""))
+    except (TypeError, ValueError):
+        return None, "Custom budget must be a number."
+
+    if amount < MIN_CUSTOM_BUDGET or amount > MAX_CUSTOM_BUDGET:
+        return (
+            None,
+            f"Custom budget must be between Rs.{MIN_CUSTOM_BUDGET} and Rs.{MAX_CUSTOM_BUDGET}.",
+        )
+    return amount, None
+
+
+def _parse_budget(
+    value: Any, max_budget_raw: Any = None
+) -> tuple[BudgetLevel | None, float | None, str | None]:
     if value is None or not str(value).strip():
-        return None, "Budget is required (low / medium / high)."
+        return None, None, "Budget is required (low / medium / high / custom)."
 
     budget = str(value).strip().lower()
-    if budget not in VALID_BUDGETS:
-        return None, f"Budget must be one of: {', '.join(VALID_BUDGETS)}."
-    return budget, None
+
+    # Allow sending a raw number as the budget value.
+    try:
+        numeric = float(budget.replace(",", ""))
+    except ValueError:
+        numeric = None
+
+    if numeric is not None:
+        amount, error = _parse_max_budget(numeric)
+        if error:
+            return None, None, error
+        return "custom", amount, None
+
+    if budget == "custom":
+        amount, error = _parse_max_budget(max_budget_raw)
+        if error:
+            return None, None, error
+        return "custom", amount, None
+
+    if budget not in PRESET_BUDGETS:
+        return None, None, "Budget must be one of: low, medium, high, or custom."
+    return budget, None, None  # type: ignore[return-value]
 
 
 def _parse_min_rating(value: Any) -> tuple[float | None, str | None]:
@@ -99,7 +141,9 @@ def parse_preferences(data: dict[str, Any]) -> ValidationResult:
         if not location:
             errors["location"] = "Location is required."
 
-    budget, budget_error = _parse_budget(data.get("budget"))
+    budget, max_budget, budget_error = _parse_budget(
+        data.get("budget"), data.get("max_budget")
+    )
     if budget_error:
         errors["budget"] = budget_error
 
@@ -121,5 +165,6 @@ def parse_preferences(data: dict[str, Any]) -> ValidationResult:
         cuisine=cuisine,
         min_rating=min_rating or 0.0,
         additional_notes=additional_notes,
+        max_budget=max_budget,
     )
     return ValidationResult(preferences=preferences, warnings=warnings)

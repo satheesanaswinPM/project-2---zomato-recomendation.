@@ -31,7 +31,7 @@ export function RecommendationCard({ item }: RecommendationCardProps) {
     item.rating_label === "Unrated" ? null : item.rating_label;
 
   return (
-    <article className="relative overflow-hidden rounded-2xl bg-white shadow-card transition-shadow hover:shadow-lg">
+    <article className="relative overflow-hidden rounded-2xl bg-white shadow-card transition-shadow hover:shadow-lg animate-fade-in">
       <div className="absolute left-3 top-3 z-10 rounded-md bg-brand px-2 py-0.5 text-xs font-bold text-white">
         #{item.rank}
       </div>
