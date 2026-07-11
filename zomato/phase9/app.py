@@ -76,44 +76,7 @@ def main() -> None:
         st.error(f"Failed to load restaurant data: {exc}")
         st.stop()
 
-    with st.expander("Natural language (optional)", expanded=False):
-        nl_query = st.text_input(
-            "Describe what you want",
-            placeholder="Cheap Italian in Indiranagar, 4+ stars",
-            key="nl_query",
-        )
-        if st.button("Parse into form fields", key="nl_parse"):
-            if not nl_query.strip():
-                st.warning("Enter a phrase first.")
-            else:
-                try:
-                    from phase8.pipeline import parse_nl_query
-
-                    parsed = parse_nl_query(nl_query.strip())
-                    if not parsed.ok or parsed.preferences is None:
-                        render_errors(parsed.errors or {"query": "Could not parse."})
-                    else:
-                        prefs = parsed.preferences.to_dict()
-                        st.session_state["nl_prefs"] = prefs
-                        st.success(
-                            f"Parsed: {prefs.get('location')} · "
-                            f"{prefs.get('budget')} · {prefs.get('cuisine') or 'any cuisine'}"
-                        )
-                        st.info(
-                            "Use the form below (or click Find restaurants after "
-                            "adjusting fields). Parsed values are shown here for review."
-                        )
-                        st.json(prefs)
-                except Exception as exc:
-                    st.error(f"NL parse failed: {exc}")
-
     prefs = collect_preferences(localities)
-
-    # If user just parsed NL and wants one-click search from session
-    if st.session_state.get("nl_prefs") and st.button(
-        "Search using last parsed NL preferences"
-    ):
-        prefs = dict(st.session_state["nl_prefs"])
 
     if prefs is None:
         st.caption("Tip: pick a locality like Indiranagar, HSR, or Whitefield.")

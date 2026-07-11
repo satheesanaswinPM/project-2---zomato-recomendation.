@@ -93,16 +93,13 @@ def inject_styles() -> None:
 def render_header() -> None:
     st.markdown(
         """
-        <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.25rem;">
+        <div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:1.25rem;">
           <div style="width:36px;height:36px;border-radius:50%;background:#E23744;
                       display:flex;align-items:center;justify-content:center;color:white;font-weight:700;">
             ✦
           </div>
           <h1 style="margin:0;color:#E23744;font-size:1.85rem;">Culinary Compass</h1>
         </div>
-        <p style="color:#555;margin:0 0 1.25rem;">
-          AI restaurant recommendations for Bangalore — powered by the Zomato dataset + Groq.
-        </p>
         """,
         unsafe_allow_html=True,
     )
